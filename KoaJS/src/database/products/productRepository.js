@@ -5,11 +5,11 @@ const orderProductsByDate  = require("../../presenter/products/orderProductsByDa
 const productWithFieldsParam  = require("../../presenter/products/productsWithFieldsParam");
 
 
-const getAllProducts = (queryParam) =>{
+const getProducts = (queryParam) =>{
   const {limit, sort} = queryParam;
-  let productsData = products;
+  let productsData = [...products];
   if(sort){
-    productsData = orderProductsByDate(products, sort);
+    productsData = orderProductsByDate(productsData, sort);
   }
   if(limit){
     productsData = productsData.slice(0, parseInt(limit));
@@ -34,14 +34,14 @@ const addProduct = (data) =>{
     path.join(__dirname, 'products.json'),
     JSON.stringify(productData)
   );
-  return newProduct
+  return newProduct;
 }
 
 const updateProduct = (id, data) =>{
   const index = products.findIndex(
     (product) => parseInt(product.id) === parseInt(id)
   );
-  products[index] = { ...data, id};
+  products[index] = { ...data };
   fs.writeFileSync(
     path.join(__dirname, 'products.json'),
     JSON.stringify(products)
@@ -50,18 +50,16 @@ const updateProduct = (id, data) =>{
 }
 
 const deleteProduct = (id) =>{
-  const index = products.findIndex(
-    (product) => parseInt(product.id) === parseInt(id)
-  );
-  products.splice(index, 1);
-  return fs.writeFileSync(
+  const newProducts = products.filter((product) => parseInt(product.id) !== parseInt(id));
+  fs.writeFileSync(
     path.join(__dirname, 'products.json'),
-    JSON.stringify(products)
+    JSON.stringify(newProducts)
   );
+  return newProducts;
 }
 
 module.exports = {
-    getAllProducts,
+    getProducts,
     getProduct,
     addProduct,
     updateProduct,
