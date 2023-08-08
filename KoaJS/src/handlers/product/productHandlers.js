@@ -1,6 +1,6 @@
 const {
     getProduct,
-    getAllProducts,
+    getProducts,
     addProduct,
     updateProduct,
     deleteProduct,
@@ -33,7 +33,7 @@ const {
   async function handleGetProducts(ctx) {
     try {
       const queryParam = ctx.query;
-      const allProducts = getAllProducts(queryParam);
+      const allProducts = getProducts(queryParam);
       return (ctx.body = {
         success: true,
         data: allProducts,
@@ -85,11 +85,21 @@ const {
   async function handleDeleteProduct(ctx) {
     try {
       const { id } = ctx.params;
-      deleteProduct(id);
-      ctx.status = 200;
+      const queryParam = ctx.query;
+      const currentProduct = getProduct(id, queryParam);
+      if (currentProduct) {
+        deleteProduct(id);
+        ctx.status = 200;
+        return (ctx.body = {
+            success : true,
+            message: `Product with id: ${id} was deleted successfully`
+        })
+      }
+      ctx.status = 404;
+
       return (ctx.body = {
-          success : true,
-          message: `Product with id: ${id} was deleted successfully`
+          success : false,
+          message: `Product not found with id: ${id}`
       })
     } catch (error) {
       return (ctx.body = {
