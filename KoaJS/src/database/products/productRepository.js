@@ -51,11 +51,10 @@ const updateProduct = (id, data) =>{
 
 const deleteProduct = (id) =>{
   const newProducts = products.filter((product) => parseInt(product.id) !== parseInt(id));
-  fs.writeFileSync(
+  return fs.writeFileSync(
     path.join(__dirname, 'products.json'),
     JSON.stringify(newProducts)
   );
-  return newProducts;
 }
 
 module.exports = {
@@ -65,5 +64,3 @@ module.exports = {
     updateProduct,
     deleteProduct
 }
-
-
